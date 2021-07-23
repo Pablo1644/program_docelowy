@@ -7,7 +7,7 @@ import pickle
 import os
 import re
 # Baza danych z 1 folderu
-
+pd.options.mode.chained_assignment = None  # default='warn'
 
 # Listy przechowywujace dane
 list_of_height = []
@@ -49,5 +49,22 @@ df['Shape']=df['Unnamed: 3']
 df['Size']=df['Unnamed: 4']
 df['Mass']=df['Unnamed: 5']
 df = df.drop(columns=['Unnamed: 1', 'Unnamed: 3', 'Unnamed: 4', 'Unnamed: 5'])
+#print(df)
+for index in df.index:
+    reg = re.match("^[0-9][,][0-9][0-9][0-9]", str(df['Mass'][index]))
+    if reg:
+        p=str(df['Mass'][index])
+        p=float(p.replace(',',''))
+        df['Mass'][index] = p
+    reg2 = re.match("^[1][ ][0-9]", str(df['Mass'][index]))
+    if reg2:
+        p = str(df['Mass'][index])
+        p = float(p.replace(' ', ''))
+        df['Mass'][index] = p
+    reg3 = re.match("^[1][.][2][1][9][.]", str(df['Mass'][index]))
+    if reg3:
+        p=1219.2
+        df['Mass'][index]=p
 print(df)
+
 df.to_pickle('data_n_1.pickle')

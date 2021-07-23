@@ -7,18 +7,13 @@ import pickle
 import os
 import re
 # Baza danych z 1 folderu
-
+pd.options.mode.chained_assignment = None  # default='warn'
 
 # Listy przechowywujace dane
 list_of_height = []
 list_of_mass = []
 list_of_types = []
 appended_data = []
-# list_of_data = []
-
-# Funkcje
-# Funkcja odczytujaca wysokosc ze stringa,
-# gdzie argumentem jest szukana wysokosc,zwracajaca wysokosc jako int (int minus int)
 
 all_data=pd.DataFrame()
 df = pd.DataFrame()
@@ -35,19 +30,12 @@ for element in list_of_directories:
         reg = re.match("^[a-zA-Z][2,3,4][_][0-9][0-9][_][0-9][0-9]", prev[j])
         if prev[j].endswith('.xls') and reg:
             list_of_good_files.append(prev[j])
-            df= df.append(pd.read_excel(source+'\\'+element+'\\'+prev[j],skiprows=3),ignore_index=True, sort=False)
-pd.set_option('display.max_rows', df.shape[0] + 1)
-for element in list_of_directories:
-    prev = os.listdir(source+'\\'+element)
-    # print(prev)
-    for j in range(0,prev.__len__()):
-        reg = re.match("^[a-zA-Z][1][_][0-9][0-9][_][0-9][0-9]", prev[j])
-        if prev[j].endswith('.xls') and reg:
-            list_of_good_files.append(prev[j])
             reg = re.match("^[a-zA-Z][1][_][0-9][0-9][_][0-9][0-9]",prev[j])
             df= df.append(pd.read_excel(source+'\\'+element+'\\'+prev[j],skiprows=3),ignore_index=True, sort=False)
-
 pd.set_option('display.max_rows', df.shape[0] + 1)
+
+#print(df.columns)
+#print(df)
 drop_col = ['Unnamed: 0', 'Unnamed: 2','Unnamed: 6',
           'Unnamed: 7','No.', 'HEIGH, CM', 'ORIGIN',
        'SHAPE', 'SIZE', 'GRAMS', 'NOTES', 'Unnamed: 8']
@@ -61,5 +49,17 @@ df['Shape']=df['Unnamed: 3']
 df['Size']=df['Unnamed: 4']
 df['Mass']=df['Unnamed: 5']
 df = df.drop(columns=['Unnamed: 1', 'Unnamed: 3', 'Unnamed: 4', 'Unnamed: 5'])
+for index in df.index:
+    reg = re.match("^[0-9][,][0-9][0-9][0-9]", str(df['Mass'][index]))
+    if reg:
+        #print(df['Mass'][index])
+        p=str(df['Mass'][index])
+        p=p.replace(',','')
+        try:
+            df['Mass'][index]=float(p)
+        except ValueError:
+            df['Mass'][index]=1180.0
+    #if isinstance(df['Mass'][index],float) is False:
+        #print(df['Mass'][index])
 print(df)
 df.to_pickle('data_n_2.pickle')
