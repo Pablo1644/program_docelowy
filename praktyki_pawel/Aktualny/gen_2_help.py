@@ -59,7 +59,7 @@ for index in df.index:
             df['Mass'][index]=float(p)
         except ValueError:
             df['Mass'][index]=1180.0
-    #if isinstance(df['Mass'][index],float) is False:
-        #print(df['Mass'][index])
-print(df)
+    if isinstance(df['Mass'][index],str) is True:
+        df['Mass'][index] = df['Mass'][index].replace('1 ','1')
+        df['Mass'][index] = float(df['Mass'][index].replace('2 ', '2'))
 df.to_pickle('data_n_2.pickle')

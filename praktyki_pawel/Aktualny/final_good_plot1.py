@@ -1,9 +1,7 @@
 import json
-import math
 import pandas as pd
 from scipy import optimize as opt
 import numpy as np
-import matplotlib.pyplot as plt
 from natsort import index_natsorted, order_by_index
 
 
@@ -23,12 +21,10 @@ list_of_non_types = []
 list_for_dict = []
 dictionary_of_values = {}  # Slownik
 df = pd.read_pickle('data_n_1.pickle')
-#df.reset_index(inplace=True, drop=True)
-#df = df.reindex(index=order_by_index(df.index, index_natsorted(df['Shape'], reverse=True)))
 pd.set_option('display.max_rows', df.shape[0] + 1)
 df['Shape'] = df['Shape'].str.replace('-REN', '')
 df['Shape'] = df['Shape'].str.replace('-RE', '')
-df['Height'] = df['Height'].str.replace('--','-')
+df['Height'] = df['Height'].str.replace('--', '-')
 df['Size'] = df['Size'].str.replace('X', '*')
 df = df.reindex(index=order_by_index(df.index, index_natsorted(df['Size'], reverse=True)))
 pd.set_option('display.max_rows', df.shape[0] + 1)
@@ -41,13 +37,13 @@ for index in df.index:
     try:
         df['Types'] = df['Shape'] + ' ' + df['Size']
         p = float(df['Hmax'][index]) - float(df['Hmin'][index])
-        #print(p)
-        df['H'][index]=p
+        # print(p)
+        df['H'][index] = p
     except ValueError:
         print(f'Index zly to {index}')
     except TypeError:
         print(f'zly index to{index}')
-df=df.drop(columns=['Size','Shape','Height'])
+df = df.drop(columns=['Size', 'Shape', 'Height'])
 
 df = df.reset_index(drop=True)
 df = df.reindex(index=order_by_index(df.index, index_natsorted(df['Types'], reverse=True)))
@@ -60,17 +56,17 @@ for p in range(df.index[0], index1):
         if df['Types'][p] == df['Types'][p - 1]:
             temp_list.append([df['Types'][p], df['H'][p], df['Mass'][p]])
             list_of_good_types.append(temp_list)
-    if p ==0:
+    if p == 0:
         if df['Types'][p] == df['Types'][p + 1]:
             temp_list.append([df['Types'][p], df['H'][p], df['Mass'][p]])
     else:
         if df['Types'][p] == df['Types'][p + 1]:
             temp_list.append([df['Types'][p], df['H'][p], df['Mass'][p]])
-           # print(temp_list)
+        # print(temp_list)
 
         if p != df.index[0] and df['Types'][p] == df['Types'][p - 1] and df['Types'][p] != df['Types'][p + 1]:
             temp_list.append([df['Types'][p], df['H'][p], df['Mass'][p]])
-           # print(temp_list)
+        # print(temp_list)
         if df['Types'][p] != df['Types'][p + 1]:
             if temp_list.__len__() != 0:
                 list_of_good_types.append(temp_list)
@@ -84,7 +80,8 @@ X = []
 Y = []
 Z = []
 u_a, u_b = 0, 0
-file2=open('Wyniki_Ostateczne_1_rury.txt', "a+")
+j, a, b = 0, 0, 0
+file2 = open('Wyniki_Ostateczne_1_rury.txt', "a+")
 for i in range(0, list_of_good_types.__len__()):
     for j in range(0, list_of_good_types[i].__len__()):
         X.append(float(list_of_good_types[i][j][2]))
@@ -121,7 +118,7 @@ for i in range(0, list_of_good_types.__len__()):
     X = []
     Y = []
 
-file2.close
+file2.close()
 l_file = json.dumps(dictionary_of_values)
 jsonFile = open("dane_koncowe.json", "w")
 jsonFile.write(l_file)
